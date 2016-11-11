@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import os.path
 import json
 import sys
 from librip.ctxmngrs import timer
@@ -6,40 +7,31 @@ from librip.decorators import print_result
 from librip.gens import field, gen_random
 from librip.iterators import Unique as unique
 
-path = None
+path = os.path.abspath(sys.argv[1])
 
 # Здесь необходимо в переменную path получить
 # путь до файла, который был передан при запуске
 
-with open(path) as f:
+with open(path, encoding="utf8") as f:
     data = json.load(f)
 
-
-# Далее необходимо реализовать все функции по заданию, заменив `raise NotImplemented`
-# Важно!
-# Функции с 1 по 3 дожны быть реализованы в одну строку
-# В реализации функции 4 может быть до 3 строк
-# При этом строки должны быть не длиннее 80 символов
-
-@print_result
+# Функция для вывода отсортированного списка профессий без повторений
 def f1(arg):
-    raise NotImplemented
+    return(sorted([i for i in unique([j['job-name'] for j in arg], ignore_case = True)]))
 
-
-@print_result
+# Функция для отбора профессий со словом "программист" в начале
 def f2(arg):
-    raise NotImplemented
+	return(filter(lambda x: (x.lower().find('программист') == 0), arg))
 
-
-@print_result
+# Функция модификации профессии
 def f3(arg):
-    raise NotImplemented
+    return(["{} {}".format(x, "с опытом Python") for x in arg])
 
-
+# Функция генерации размера зарплаты для профессий
 @print_result
 def f4(arg):
-    raise NotImplemented
+    return(["{}, {} {} {}".format(x,"зарплата", y, "руб.") for x, y in zip(arg, list(gen_random(100000, 200000, len(arg))))])
 
 
 with timer():
-    f4(f3(f2(f1(data))))
+	f4(f3(f2(f1(data))))
